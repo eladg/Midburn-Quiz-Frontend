@@ -1,0 +1,29 @@
+{
+  "name": "burner-games-frontend",
+  "version": "1.0.0",
+  "description": ">Version: 1.0",
+  "dependencies": {},
+  "devDependencies": {
+    "browser-sync": "^2.12.8",
+    "browserify": "^13.0.1",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-concat": "^2.6.0",
+    "gulp-uglify": "^1.5.3",
+    "gulp-util": "^3.0.7",
+    "open": "0.0.5"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eladg/Midburn-Quiz-Frontend.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eladg/Midburn-Quiz-Frontend/issues"
+  },
+  "homepage": "https://github.com/eladg/Midburn-Quiz-Frontend#readme"
+}

@@ -10,6 +10,8 @@
  *
  * */
 
+angular = require('angular');
+
 var app = angular.module('quizApp', ['ngResource', 'pascalprecht.translate']);
 
 //
