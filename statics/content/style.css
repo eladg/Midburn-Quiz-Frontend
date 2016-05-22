@@ -117,12 +117,15 @@ body {
 /*     margin: 40px auto; */
 }
 
+.category-pagination {
+    z-index: 0;
+}
+
 .card {
     max-width: 650px;
     margin: 20px auto;
 }
 
-.question-subject,
 .question-number {
     display: inline-block;
     background: #3799EC;
