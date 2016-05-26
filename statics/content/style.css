@@ -129,14 +129,14 @@ body {
 .correct {
     background: greenyellow;
     border-style: solid;
-    border-width: thin;
+    border-width: 2px;
     border-color: #A2A2A2;
 }
 
 .wrong {
     background: lightcoral;
     border-style: solid;
-    border-width: thin;
+    border-width: 2px;
     border-color: #A2A2A2;
 }
 
