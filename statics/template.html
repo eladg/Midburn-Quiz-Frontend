@@ -31,9 +31,9 @@
         <div class="row">
           <div class="col-md-12">
             <ul class="list-group" id="options">
-              <li class="list-group-item answer-option col-sm-12 col-md-6" ng-repeat="option in options|orderBy:random">
+              <li class="list-group-item answer-option col-sm-12 col-md-6" ng-click="checkAnswer($event)" ng-repeat="option in options|orderBy:random">
                 <label class="answer-option-label">
-                  <input type="radio" name="answer" ng-click="checkAnswer()" ng-model="checked" value="{{option.id}}">
+                  <input type="radio" name="answer" ng-model="checked" value="{{option.id}}">
                     {{ $index+1 }}. {{option.body}}
                 </label>
               </li>
@@ -86,22 +86,6 @@
   </div>
 </div>
 
-<div id="quiz-no-answer-alert" class="fade-screen">
-  <div class="container">
-    <div class="clearfix">
-      <div class="jumbotron">
-        <h1>מה עם לבחור תשובה..</h1>
-        <h2>אחרת, איך נראה אותך בפלאיה?</h2>
-        <div style="margin-top: 20px;">
-          <p>
-            <a class="btn game-btn" href="#" role="button" onclick="$('#quiz-no-answer-alert').toggle();">נו טוב..</a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div id="quiz-correct-answer-alert" class="fade-screen" onclick="$('#quiz-correct-answer-alert').fadeOut();">
   <div class="container">
     <div class="clearfix">
@@ -126,13 +110,4 @@
 
     // Hide correct answer alert
     $('#quiz-correct-answer-alert').toggle();
-
-    // Mess with the Crowd
-    /* $("#quiz-is-over-alert-btn").hover(function () {
-     var X = Math.random() * (500 - 12) + 12;
-     var Y = Math.random() * (500 - 12) + 12;
-     $(this).css({'position': 'absolute', 'top': Y, 'left': X})
-     }, function () {
-     //$(this).css('position', 'static')
-     }); */
 </script>

@@ -26,6 +26,7 @@ Window.currentQuestion = {
     id: null,
     question: null,
     options: null,
+    userSelectedElement: null,
     answer: null,
     category: null
 }
@@ -41,8 +42,7 @@ Window.game = {
 app.controller('quizInit', function ($scope, $rootScope, $http, config) {
 
     // Get user id from url param
-    // userId = getUrlParams('userId');
-    userId = config.userId;
+    userId = getUrlParams('userId');
 
     if (userId === undefined) {
         $(function () {
@@ -53,6 +53,7 @@ app.controller('quizInit', function ($scope, $rootScope, $http, config) {
     }
 
     $scope.Init = function (lang = "en") {
+
         var new_gameRequest = {
             method: 'POST',
             url: config.API_URL + '/games/new/',
@@ -189,22 +190,22 @@ app.directive('quiz', function (quizFactory, $http, config) {
                     data: { question_id: Window.currentQuestion.id }
                 }
 
-                $http(post_getHint).then(function (data) {
+                $http(post_getHint).then(function (response) {
 
-                    var Hints = [];
-                    for (var i = 0; i < data.data.hints.length; i++) Hints.push(data.data.hints[i].id);
+                    var hints = [];
+                    for (var i = 0; i < response.data.hints.length; i++) {
+                        hints.push(response.data.hints[i].id);
+                    }
 
                     // Remove two answers
-                    $("ul#options > li input[type='radio']").each(function (a, Elm) {
-                        var Answer = Elm.value;
-                        for (var i = 0; i < Hints.length; i++) {
-                            if (Number($(this).val()) == Number(Hints[i])) {
-                                $("ul#options > li input[value="+Answer+"]").parent().parent().fadeOut();
-                                Window.game.hintBtn.attr('disabled');
-                                Window.game.hintBtn.css('opacity', '0.5');
-                            }
-                        }
-                    });
+                    // $("ul#options > li input[type='radio'][value='1385'], ul#options > li input[type='radio'][value='1388']")
+
+                    for (var i = 0; i < hints.length; i++) {
+                        var answerId = hints[i];
+                        var selector = "ul#options > li input[type='radio'][value='" + answerId + "']";
+                        var elem = $(selector)[0];
+                        elem.parentNode.parentNode.classList.add("disabled-option");
+                    }
                 });
             };
 
@@ -214,18 +215,34 @@ app.directive('quiz', function (quizFactory, $http, config) {
                 scope.score = 0;
             }
 
+            scope.isGameover = function() {
+                var gameOverFlag = true;
+                for (var i = 0; i < Window.game.categories.length; i++) {
+                    var category = Window.game.categories[i];
+                    if (!category.category_completed) {
+                        gameOverFlag = false;
+                        break;
+                    }
+                }
+                return gameOverFlag;
+            }
+
+            scope.flashCorrect = function(elem, callback) {
+                elem.classList.add("correct");
+            }
+
             // Quiz check answer
-            scope.checkAnswer = function () {
+            scope.checkAnswer = function(event) {
 
-                var AnswerButton = $('input[name=answer]:checked');
+                var inputElement = event.target.lastElementChild.lastElementChild
+                var userAnswerId = inputElement.value;
 
-                // Empty answer
-                if (!AnswerButton.length) {
-                    $('#quiz-no-answer-alert').toggle();
+                Window.currentQuestion.userSelectedElement = event.target;
+
+                if (userAnswerId === undefined) {
+                    console.log("empty answer?");
                     return;
                 }
-
-                var userAnswerId = AnswerButton.val();
 
                 // POST user answer to API
                 var postCheckAnswer = {
@@ -248,28 +265,23 @@ app.directive('quiz', function (quizFactory, $http, config) {
                     }
 
                     // check if game over
-                    var gameOverFlag = true;
-                    for (var i = 0; i < Window.game.categories.length; i++) {
-                        var category = Window.game.categories[i];
-                        if (!category.category_completed) {
-                            gameOverFlag = false;
-                            break;
-                        }
-                    }
+                    var gameOverFlag = scope.isGameover();
 
                     // do different things based on API's response on user's answer
                     if (response.data.response == true) {
-                        console.log("correct answer...");
-                        if (!gameOverFlag) {
-                            $("#quiz-correct-answer-alert").fadeIn();
-                        }
+                        Window.currentQuestion.userSelectedElement.classList.add("correct");
                     } else {
-                        console.log('wrong answer...');
+                        Window.currentQuestion.userSelectedElement.classList.add("wrong");
+                        var answerId = response.data.correct_answers[0].id;
+                        var liElem = $('input[name=answer][value='+answerId+']').parent().parent();
+                        liElem[0].classList.add("correct");
                     }
 
                     // if game is not over
                     if (!gameOverFlag) {
-                        scope.nextQuestion();
+                        setTimeout(function(argument) {
+                            scope.nextQuestion();
+                        }, 2000);
                     } else {
                         $("#quiz-is-over-alert").toggle();
                     }
@@ -350,7 +362,7 @@ app.config(function ($translateProvider) {
         TITLE: 'ברוכים הבאות לשאלון מידברן',
         DESC: 'על מנת להיות זכאי\\ת לכרטיס למידברן 2016, ראשית את\\ה חייב\\ת להראות שאכפת לך מהתרבות שלנו, על ידי מענה של 10 שאלות בצורה נכונה.',
         INFO: 'רגע, מה זה מידברן?',
-        BTN_START_GAME: 'התחלה במשחק'
+        BTN_START_GAME: 'התחל במשחק'
     };
 
     // English conf
